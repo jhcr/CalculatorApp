@@ -5,4 +5,8 @@
     <RootNamespace>CalculatorApp.ApplicationService</RootNamespace>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\EntityService\EntityService.csproj" />
+  </ItemGroup>
+
 </Project>
