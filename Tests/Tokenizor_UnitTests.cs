@@ -16,13 +16,14 @@ namespace Tests
         }
 
         [Theory]
-        [InlineData("1,", ",", true)]
-        [InlineData("1\\n", "\\n", true)]
-        [InlineData("1,1,", ",", true)]
-        void Should_IsEndByDelimiter_Work_When_Default_Delimiter_Used(string input, string expectedDelimitor, bool expected)
+        [InlineData("1,", ",", "1", true)]
+        [InlineData("1\\n", "\\n","1", true)]
+        [InlineData("1,1,", ",", "1,1", true)]
+        void Should_IsEndByDelimiter_Work_When_Default_Delimiter_Used(string input, string expectedDelimitor, string expectedLiteral, bool expected)
         {
-            var actual = _tokenizor.TryParseDelimiter(input, out var actualDelimitor);
+            var actual = _tokenizor.TryParseDelimiter(input, out var actualDelimitor, out var actualLiteral);
             Assert.Equal(expectedDelimitor, actualDelimitor);
+            Assert.Equal(expectedLiteral, actualLiteral);
             Assert.Equal(expected, actual);
 
         }
@@ -83,6 +84,17 @@ namespace Tests
             Assert.Equal(lex, actual.Raw);
             Assert.Equal(int.Parse(lex), actual.Value);
             Assert.Equal(TokenType.Number, actual.Type);
+        }
+
+        [Fact]
+        void Should_Throw_OverlappingDelimitorsException_When_Try_Add_Overlapping_Delimitors()
+        {
+            Assert.Throws<OverlappingDelimitorsException>(() =>
+            {
+                _tokenizor.ApplyConfig("ab", TokenType.PlusOperator);
+                _tokenizor.ApplyConfig("abc", TokenType.PlusOperator);
+            }
+            );
         }
     }
 }

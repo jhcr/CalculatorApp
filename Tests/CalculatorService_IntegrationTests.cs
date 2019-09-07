@@ -11,7 +11,7 @@ namespace Test
 
         public CalculatorService_IntegrationTests()
         {
-            _service = new CalculatorService(new Tokenizor());
+            _service = new CalculatorService(new Customizer(), new Lexer(new Tokenizor()));
         }
 
         [Theory]
@@ -88,5 +88,41 @@ namespace Test
             var actual = _service.Run("1000,1");
             Assert.Equal(1001, actual);
         }
+
+        [Theory]
+        [InlineData("//a\\n1a1", 2)]
+        void Should_Sum_When_Single_Custom_Delimitor_Given(string input, int expected)
+        {
+            var actual = _service.Run(input);
+            Assert.Equal(expected, actual);
+        }
+
+        [Theory]
+        [InlineData("//aa\\n1a1", 0)]
+        void Should_Treate_As_Invalid_When_Single_Custom_Delimitor_Has_Invalid_Format(string input, int expected)
+        {
+            var actual = _service.Run(input);
+            Assert.Equal(expected, actual);
+        }
+
+        [Theory]
+        [InlineData("//[a]\\n1a1", 2)]
+        [InlineData("//[a1][b2][c3]\\n1a12b23c34", 10)]
+        [InlineData("//[a1][b2][c3]\\n1 a1 2b23c3", 6)]
+        [InlineData("//[*][!!][XXX]\\n1*2!!XXX3", 6)]
+        void Should_Sum_When_Multiple_Custom_Delimitors_Given(string input, int expected)
+        {
+            var actual = _service.Run(input);
+            Assert.Equal(expected, actual);
+        }
+
+        [Fact]
+        void Should_Throw_OverlappingDelimitorsException_When_Try_Add_Overlapping_Delimitors()
+        {
+            Assert.Throws<OverlappingDelimitorsException>(() => _service.Run("//[ab][abc][abcd]\\n1abc1abcd1"));
+            Assert.Throws<OverlappingDelimitorsException>(() => _service.Run("//[,,]\\n1,,1"));
+        }
+
+
     }
 }

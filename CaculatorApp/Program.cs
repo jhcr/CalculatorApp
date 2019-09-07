@@ -9,27 +9,44 @@ namespace CaculatorApp
     {
         static void Main(string[] args)
         {
+            var running = true;
+
             var serviceProvider = SetupCaculatorApp();
 
-            var tokenizer = serviceProvider.GetService<ITokenizer>();
+            var service = serviceProvider.GetService<CalculatorService>();
 
-            Console.WriteLine("Input>");
+            Console.CancelKeyPress += delegate (object sender, ConsoleCancelEventArgs e) {
+                e.Cancel = true;
+                running = false;
+            };
 
-            var input = Console.ReadLine();
+            while (running)
+            {
+                Console.WriteLine("Input>");
 
-            var service = new CalculatorService(tokenizer);
+                var input = Console.ReadLine();
 
-            var result = service.Run(input);
+                try
+                {
+                    var result = service.Run(input);
 
-            Console.WriteLine(result);
+                    Console.WriteLine(result);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e.Message);
+                }
 
-            Console.ReadKey();
+            }
         }
 
         static ServiceProvider SetupCaculatorApp()
         {
             return new ServiceCollection()
+                .AddSingleton<ICustomizer, Customizer>()
                 .AddSingleton<ITokenizer, Tokenizor>()
+                .AddSingleton<ILexer, Lexer>()
+                .AddSingleton<CalculatorService>()
                 .BuildServiceProvider();
         }
     }

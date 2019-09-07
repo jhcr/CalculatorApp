@@ -1,36 +1,33 @@
 ﻿using CalculatorApp.EntityService;
 using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace CalculatorApp.ApplicationService
 {
     public class CalculatorService
     {
-        private ITokenizer _tokenizor;
+        private ICustomizer _customizer;
+        private ILexer _lexer;
 
-        public CalculatorService(ITokenizer tokenizor)
+        public CalculatorService(ICustomizer customizer, ILexer lexer)
         {
-            _tokenizor = tokenizor;
+            _customizer = customizer;
+            _lexer = lexer;
         }
 
         public int Run(string input)
-        {/*
-            var lexemes = input?.Split(',');
-            var sum = 0;
-            for (int i=0; i <lexemes.Length; i++)
-            {
-                if (!string.IsNullOrWhiteSpace(lexemes[i]) && int.TryParse(lexemes[i].Trim(), out var number))
-                    sum += number;
-            }
+        {
+            _customizer.Config(_lexer, ref input);
 
-            return (_previousSum += sum);
-            */
-            var lexer = new Lexer(_tokenizor);
-            var tokens = lexer.Scan(input);
+            var tokens = _lexer.Scan(input);
 
+            return tokens?.Where(t => t.Type == TokenType.Number)?.Select(t => t.Value)?.Sum() ?? 0;
 
-            return tokens?.Where(t=>t.Type == TokenType.Number)?.Select(t=>t.Value)?.Sum()??0;
 
         }
+
+       
     }
 }
