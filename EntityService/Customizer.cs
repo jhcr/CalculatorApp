@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Linq;
 
 namespace CalculatorApp.EntityService
 {
@@ -83,7 +84,7 @@ namespace CalculatorApp.EntityService
             delimiters = default(Dictionary<string, TokenType>);
             offset = 0;
 
-            var c = new Regex($"(?<custom>^//(?<delimiter>.)\\\\n).*").Matches(text);
+            var c = new Regex("(?<custom>^//(?<delimiter>.)\\\\n).*").Matches(text);
             if (c.Count == 1 && c[0].Success)
             {
                 delimiters = new Dictionary<string, TokenType> { { c[0].Groups["delimiter"].Value, TokenType.PlusOperator } };
@@ -92,7 +93,7 @@ namespace CalculatorApp.EntityService
 
             }
 
-            c = new Regex($"(?<custom>^//(?<item>\\[(?<delimiter>[^\\[\\]]*)\\])+\\\\n).*").Matches(text);
+            c = new Regex("(?<custom>^//(?<item>\\[(?<delimiter>[^\\[\\]]*)\\])+\\\\n).*").Matches(text);
             if (c.Count == 1 && c[0].Success)
             {
                 var enu = c[0].Groups["delimiter"].Captures.GetEnumerator();
@@ -103,6 +104,50 @@ namespace CalculatorApp.EntityService
                     if (!delimiters.ContainsKey(de))
                         delimiters.Add(de, TokenType.PlusOperator);
                 }
+                offset = c[0].Groups["custom"].Length;
+                return true;
+
+            }
+
+            // for +,-,*, /
+            c = new Regex("(?<custom>^//((?<item>[\\+\\-\\*\\/])\\[(?<delimiter>[^\\[\\]]*)\\])+\\\\n).*").Matches(text);
+            if (c.Count == 1 && c[0].Success)
+            {
+                delimiters = new Dictionary<string, TokenType>();
+
+                var itemEnu = c[0].Groups["item"].Captures.GetEnumerator();
+                var deEnu = c[0].Groups["delimiter"].Captures.GetEnumerator();
+
+                delimiters = new Dictionary<string, TokenType>();
+
+                while (itemEnu.MoveNext() && deEnu.MoveNext())
+                {
+                    var item = (itemEnu.Current as Capture).Value;
+                    var de = (deEnu.Current as Capture).Value;
+
+                    if (!delimiters.ContainsKey(de))
+                    {
+                        switch (item)
+                        {
+                            case "+":
+                                delimiters.Add(de, TokenType.PlusOperator);
+                                break;
+                            case "-":
+                                delimiters.Add(de, TokenType.MinusOperator);
+                                break;
+                            case "*":
+                                delimiters.Add(de, TokenType.MultiplyOperator);
+                                break;
+                            case "/":
+                                delimiters.Add(de, TokenType.DivideOperator);
+                                break;
+                            default:
+                                break;
+
+                        }
+                    }
+                }
+
                 offset = c[0].Groups["custom"].Length;
                 return true;
 

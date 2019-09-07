@@ -132,6 +132,26 @@ namespace Test
             Assert.Throws<OverlappingDelimitersException>(() => _service.Run("//[,,]\\n1,,1"));
         }
 
+        [Theory]
+        [InlineData("//+[+]-[!]*[*]/[$$]\\n2*4", 8)]
+        [InlineData("//+[+]-[!]*[*]/[$$]\\n2*4*6", 48)]
+        [InlineData("//+[+]-[!]*[*]/[$$]\\n1+2*4!2", 7)]
+        [InlineData("//+[+]-[!]*[*]/[$$]\\n1+2*4!2$$2", 8)]
+        [InlineData("//+[+]-[-]*[*]/[/]\\n2*5+6/3*4-2+6/3*2", 20)]
+        void Should_Calculate_When_Mixed_Operators_Given(string input, int expected)
+        {
+            var actual = _service.Run(input);
+            Assert.Equal(expected, actual);
+        }
 
+        [Theory]
+        [InlineData("//+[+]-[-]*[*]/[/]\\n1+2000", 1)]
+        [InlineData("//+[+]-[-]*[*]/[/]\\n1*2000", 1)]
+        [InlineData("//+[+]-[-]*[*]/[/]\\n1+2000-3*4000", -2)]
+        void Should_Igored_Correly_When_Large_Numbers_Given(string input, int expected)
+        {
+            var actual = _service.Run(input);
+            Assert.Equal(expected, actual);
+        }
     }
 }

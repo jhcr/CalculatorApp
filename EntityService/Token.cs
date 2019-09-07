@@ -8,8 +8,11 @@ namespace CalculatorApp.EntityService
     {
         None = 0,
         PlusOperator = 1,
-        Number = 2,
-        IgnoredNumber = 3
+        MinusOperator = 2,
+        MultiplyOperator = 3,
+        DivideOperator = 4,
+        Number = 5,
+        IgnoredNumber = 6
     }
 
     /// <summary>

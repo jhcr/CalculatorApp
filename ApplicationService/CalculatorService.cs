@@ -21,9 +21,15 @@ namespace CalculatorApp.ApplicationService
         {
             var tokens = _lexer.Scan(input);
 
-            var result = tokens?.Where(t => t.Type == TokenType.Number)?.Select(t => t.Value)?.Sum() ?? 0;
+            var ast = new AST(tokens);
 
-            _printer.Print(tokens, result);
+            ast.EvaluationCallBack = (token) => { _printer.Print(token); };
+
+            var result = ast.Evaluate() ?? 0;
+
+            _printer.Print(result);
+
+            //_printer.Print(tokens, result);
 
             return result;
 
