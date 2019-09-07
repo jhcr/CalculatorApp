@@ -40,19 +40,19 @@ namespace CalculatorApp.EntityService
             delimiters = default(Dictionary<string, TokenType>);
             offset = 0;
 
-            var c = new Regex($"(?<custom>^//(?<delimitor>.)\\\\n).*").Matches(text);
+            var c = new Regex($"(?<custom>^//(?<delimiter>.)\\\\n).*").Matches(text);
             if (c.Count == 1 && c[0].Success)
             {
-                delimiters = new Dictionary<string, TokenType> { { c[0].Groups["delimitor"].Value, TokenType.PlusOperator } };
+                delimiters = new Dictionary<string, TokenType> { { c[0].Groups["delimiter"].Value, TokenType.PlusOperator } };
                 offset = c[0].Groups["custom"].Length;
                 return true;
 
             }
 
-            c = new Regex($"(?<custom>^//(?<item>\\[(?<delimitor>[^\\[\\]]*)\\])+\\\\n).*").Matches(text);
+            c = new Regex($"(?<custom>^//(?<item>\\[(?<delimiter>[^\\[\\]]*)\\])+\\\\n).*").Matches(text);
             if (c.Count == 1 && c[0].Success)
             {
-                var enu = c[0].Groups["delimitor"].Captures.GetEnumerator();
+                var enu = c[0].Groups["delimiter"].Captures.GetEnumerator();
                 delimiters = new Dictionary<string, TokenType>();
                 while (enu.MoveNext())
                 {

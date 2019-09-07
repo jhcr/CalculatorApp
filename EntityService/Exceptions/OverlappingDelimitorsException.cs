@@ -4,14 +4,14 @@ using System.Text;
 
 namespace CalculatorApp.EntityService
 {
-    public class OverlappingDelimitorsException : Exception
+    public class OverlappingDelimitersException : Exception
     {
-        public IEnumerable<string> Delimitors { get; set; }
+        public IEnumerable<string> Delimiters { get; set; }
 
-        public OverlappingDelimitorsException(IEnumerable<string> delimitors)
-            :base($"Overlapping Delimitors denied: {string.Join(", ", delimitors)}")
+        public OverlappingDelimitersException(IEnumerable<string> delimiters)
+            :base($"Overlapping Delimiters denied: {string.Join(", ", delimiters)}")
         {
-            Delimitors = delimitors;
+            Delimiters = delimiters;
         }
     }
 }

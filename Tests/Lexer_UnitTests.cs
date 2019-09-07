@@ -20,7 +20,7 @@ namespace Tests
         }
 
         [Fact]
-        public void Should_Identify_All_Delimitors_When_Multiple_Delimitors_Given()
+        public void Should_Identify_All_Delimiters_When_Multiple_Delimiters_Given()
         {
             _tokenizerMock.TryParseDelimiter(Arg.Is("1"), out Arg.Any<string>(), out Arg.Any<string>()).Returns(false);
             _tokenizerMock.TryParseDelimiter(Arg.Is("1,"), out Arg.Any<string>(), out Arg.Any<string>()).Returns(arg => { arg[1] = ","; arg[2] = "1"; return true; });
@@ -121,7 +121,7 @@ namespace Tests
 
         /* Commented out after moved custom delimiter logic to application service level
         [Fact]
-        public void Should_Custom_Delimitor_Work_When_Single_Char_Given()
+        public void Should_Custom_Delimiter_Work_When_Single_Char_Given()
         {
             _tokenizerMock.TryParseDelimiter(Arg.Any<string>(), out Arg.Any<string>(), out Arg.Any<string>()).Returns(false);
             _tokenizerMock.TryParseDelimiter(Arg.Is("1a"), out Arg.Any<string>(), out Arg.Any<string>()).Returns(arg => { arg[1] = "a"; arg[2] = "1"; return true; });
@@ -148,7 +148,7 @@ namespace Tests
         }
 
         [Fact]
-        public void Should_Custom_Delimitor_Work_When_Any_Length_Given()
+        public void Should_Custom_Delimiter_Work_When_Any_Length_Given()
         {
             _tokenizerMock.TryParseDelimiter(Arg.Any<string>(), out Arg.Any<string>(), out Arg.Any<string>()).Returns(false);
             _tokenizerMock.TryParseDelimiter(Arg.Is("1aaa"), out Arg.Any<string>(), out Arg.Any<string>()).Returns(arg => { arg[1] = "aaa"; arg[2] = "1"; return true; });
@@ -174,7 +174,7 @@ namespace Tests
         }
 
         [Fact]
-        public void Should_Custom_Delimitor_Work_When_Multiple_Given()
+        public void Should_Custom_Delimiter_Work_When_Multiple_Given()
         {
             _tokenizerMock.TryParseDelimiter(Arg.Any<string>(), out Arg.Any<string>(), out Arg.Any<string>()).Returns(false);
             _tokenizerMock.TryParseDelimiter(Arg.Is("1**"), out Arg.Any<string>(), out Arg.Any<string>()).Returns(arg => { arg[1] = "**"; arg[2] = "1"; return true; });
@@ -210,7 +210,7 @@ namespace Tests
         }
 
         [Fact]
-        public void Should_Default_Delimitor_Work_When_Custom_Given()
+        public void Should_Default_Delimiter_Work_When_Custom_Given()
         {
             _tokenizerMock.TryParseDelimiter(Arg.Any<string>(), out Arg.Any<string>(), out Arg.Any<string>()).Returns(false);
             _tokenizerMock.TryParseDelimiter(Arg.Is("1\\n"), out Arg.Any<string>(), out Arg.Any<string>()).Returns(arg => { arg[1] = "\\n"; arg[2] = "1"; return true; });
@@ -236,7 +236,7 @@ namespace Tests
         }
 
         [Fact]
-        public void Should_Default_Delimitor_Work_When_Same_Custom_Given()
+        public void Should_Default_Delimiter_Work_When_Same_Custom_Given()
         {
             _tokenizerMock.TryParseDelimiter(Arg.Any<string>(), out Arg.Any<string>(), out Arg.Any<string>()).Returns(false);
             _tokenizerMock.TryParseDelimiter(Arg.Is("1,"), out Arg.Any<string>(), out Arg.Any<string>()).Returns(arg => { arg[1] = ","; arg[2] = "1"; return true; });

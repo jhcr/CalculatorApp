@@ -1,5 +1,6 @@
 using CalculatorApp.ApplicationService;
 using CalculatorApp.EntityService;
+using CalculatorApp.Infrastructure;
 using System;
 using Xunit;
 
@@ -11,7 +12,7 @@ namespace Test
 
         public CalculatorService_IntegrationTests()
         {
-            _service = new CalculatorService(new Customizer(), new Lexer(new Tokenizor()));
+            _service = new CalculatorService(new Customizer(), new Lexer(new Tokenizor()), new Printer());
         }
 
         [Theory]
@@ -91,7 +92,7 @@ namespace Test
 
         [Theory]
         [InlineData("//a\\n1a1", 2)]
-        void Should_Sum_When_Single_Custom_Delimitor_Given(string input, int expected)
+        void Should_Sum_When_Single_Custom_Delimiter_Given(string input, int expected)
         {
             var actual = _service.Run(input);
             Assert.Equal(expected, actual);
@@ -99,7 +100,7 @@ namespace Test
 
         [Theory]
         [InlineData("//aa\\n1a1", 0)]
-        void Should_Treate_As_Invalid_When_Single_Custom_Delimitor_Has_Invalid_Format(string input, int expected)
+        void Should_Treate_As_Invalid_When_Single_Custom_Delimiter_Has_Invalid_Format(string input, int expected)
         {
             var actual = _service.Run(input);
             Assert.Equal(expected, actual);
@@ -110,17 +111,17 @@ namespace Test
         [InlineData("//[a1][b2][c3]\\n1a12b23c34", 10)]
         [InlineData("//[a1][b2][c3]\\n1 a1 2b23c3", 6)]
         [InlineData("//[*][!!][XXX]\\n1*2!!XXX3", 6)]
-        void Should_Sum_When_Multiple_Custom_Delimitors_Given(string input, int expected)
+        void Should_Sum_When_Multiple_Custom_Delimiters_Given(string input, int expected)
         {
             var actual = _service.Run(input);
             Assert.Equal(expected, actual);
         }
 
         [Fact]
-        void Should_Throw_OverlappingDelimitorsException_When_Try_Add_Overlapping_Delimitors()
+        void Should_Throw_OverlappingDelimitersException_When_Try_Add_Overlapping_Delimiters()
         {
-            Assert.Throws<OverlappingDelimitorsException>(() => _service.Run("//[ab][abc][abcd]\\n1abc1abcd1"));
-            Assert.Throws<OverlappingDelimitorsException>(() => _service.Run("//[,,]\\n1,,1"));
+            Assert.Throws<OverlappingDelimitersException>(() => _service.Run("//[ab][abc][abcd]\\n1abc1abcd1"));
+            Assert.Throws<OverlappingDelimitersException>(() => _service.Run("//[,,]\\n1,,1"));
         }
 
 

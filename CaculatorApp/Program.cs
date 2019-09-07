@@ -2,6 +2,7 @@
 using System;
 using Microsoft.Extensions.DependencyInjection;
 using CalculatorApp.EntityService;
+using CalculatorApp.Infrastructure;
 
 namespace CaculatorApp
 {
@@ -29,8 +30,6 @@ namespace CaculatorApp
                 try
                 {
                     var result = service.Run(input);
-
-                    Console.WriteLine(result);
                 }
                 catch (Exception e)
                 {
@@ -45,6 +44,7 @@ namespace CaculatorApp
             return new ServiceCollection()
                 .AddSingleton<ICustomizer, Customizer>()
                 .AddSingleton<ITokenizer, Tokenizor>()
+                .AddSingleton<IPrinter, Printer>()
                 .AddSingleton<ILexer, Lexer>()
                 .AddSingleton<CalculatorService>()
                 .BuildServiceProvider();

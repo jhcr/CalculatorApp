@@ -14,9 +14,9 @@ namespace CalculatorApp.EntityService
             ApplyDefaultConfig();
         }
 
-        public bool TryParseDelimiter(string lex, out string delimitor, out string literal)
+        public bool TryParseDelimiter(string lex, out string delimiter, out string literal)
         {
-            delimitor = string.Empty;
+            delimiter = string.Empty;
             literal = string.Empty;
 
             if (string.IsNullOrWhiteSpace(lex))
@@ -26,8 +26,8 @@ namespace CalculatorApp.EntityService
             {
                 if (lex.EndsWith(de))
                 {
-                    delimitor = de;
-                    literal = lex.Remove(lex.Length - delimitor.Length);
+                    delimiter = de;
+                    literal = lex.Remove(lex.Length - delimiter.Length);
                     return true;
                 }
                   
@@ -79,48 +79,48 @@ namespace CalculatorApp.EntityService
         /// <summary>
         /// Apply one config on top of default
         /// </summary>
-        /// <param name="delimitor"></param>
+        /// <param name="delimiter"></param>
         /// <param name="tokenType"></param>
-        public void ApplyConfig(string delimitor, TokenType tokenType)
+        public void ApplyConfig(string delimiter, TokenType tokenType)
         {
-            if (string.IsNullOrEmpty(delimitor))
-                throw new ArgumentNullException(nameof(delimitor));
+            if (string.IsNullOrEmpty(delimiter))
+                throw new ArgumentNullException(nameof(delimiter));
 
-            if (_rules.ContainsKey(delimitor))
+            if (_rules.ContainsKey(delimiter))
             {
-                _rules[delimitor] = tokenType;
+                _rules[delimiter] = tokenType;
             }
             else
             {
-                AssertDelimiterNotOverlapped(delimitor);
-                _rules.Add(delimitor, tokenType);
+                AssertDelimiterNotOverlapped(delimiter);
+                _rules.Add(delimiter, tokenType);
             }
         }
 
         /// <summary>
         /// Apply on top of default
         /// </summary>
-        /// <param name="delimitors"></param>
-        public void ApplyConfig(IDictionary<string, TokenType> delimitors)
+        /// <param name="delimiters"></param>
+        public void ApplyConfig(IDictionary<string, TokenType> delimiters)
         {
-            if (delimitors == null)
-                throw new ArgumentNullException(nameof(delimitors));
+            if (delimiters == null)
+                throw new ArgumentNullException(nameof(delimiters));
 
-            foreach (var de in delimitors.Keys)
+            foreach (var de in delimiters.Keys)
             {
-                ApplyConfig(de, delimitors[de]);
+                ApplyConfig(de, delimiters[de]);
             }
         }
 
-        private void AssertDelimiterNotOverlapped(string delimitor)
+        private void AssertDelimiterNotOverlapped(string delimiter)
         {
             var enu = _rules.Keys.GetEnumerator();
             while (enu.MoveNext())
             {
-                var overlapped = enu.Current.Length > delimitor.Length ? enu.Current.Contains(delimitor) : delimitor.Contains(enu.Current);
+                var overlapped = enu.Current.Length > delimiter.Length ? enu.Current.Contains(delimiter) : delimiter.Contains(enu.Current);
                 if (overlapped)
                 {
-                    throw new OverlappingDelimitorsException(new List<string> { delimitor, enu.Current });
+                    throw new OverlappingDelimitersException(new List<string> { delimiter, enu.Current });
                 }
             }
         }

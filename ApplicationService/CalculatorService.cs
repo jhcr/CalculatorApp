@@ -10,11 +10,13 @@ namespace CalculatorApp.ApplicationService
     {
         private ICustomizer _customizer;
         private ILexer _lexer;
+        private IPrinter _printer;
 
-        public CalculatorService(ICustomizer customizer, ILexer lexer)
+        public CalculatorService(ICustomizer customizer, ILexer lexer, IPrinter printer)
         {
             _customizer = customizer;
             _lexer = lexer;
+            _printer = printer;
         }
 
         public int Run(string input)
@@ -23,8 +25,11 @@ namespace CalculatorApp.ApplicationService
 
             var tokens = _lexer.Scan(input);
 
-            return tokens?.Where(t => t.Type == TokenType.Number)?.Select(t => t.Value)?.Sum() ?? 0;
+            var result = tokens?.Where(t => t.Type == TokenType.Number)?.Select(t => t.Value)?.Sum() ?? 0;
 
+            _printer.Print(tokens, result);
+
+            return result;
 
         }
 

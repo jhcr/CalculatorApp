@@ -9,8 +9,8 @@ namespace CalculatorApp.EntityService
         Token Identify(string lex);
         bool TryParseDelimiter(string lex, out string delimiter, out string literal);
         void ApplyDefaultConfig();
-        void ApplyConfig(string delimitor, TokenType token);
-        void ApplyConfig(IDictionary<string, TokenType> delimitors);
+        void ApplyConfig(string delimiter, TokenType token);
+        void ApplyConfig(IDictionary<string, TokenType> delimiters);
     }
 
 }

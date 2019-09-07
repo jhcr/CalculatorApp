@@ -28,13 +28,13 @@ namespace CalculatorApp.EntityService
             while (reader.MoveNext())
             {
                 lex += reader.Current;
-                if (_tokenizer.TryParseDelimiter(lex, out var delimitor, out var literal))
+                if (_tokenizer.TryParseDelimiter(lex, out var delimiter, out var literal))
                 {
                     tokens.Add(_tokenizer.Identify(literal));
-                    tokens.Add(_tokenizer.Identify(delimitor));
+                    tokens.Add(_tokenizer.Identify(delimiter));
 
                     lex = string.Empty;
-                    delimitor = string.Empty;
+                    delimiter = string.Empty;
                     literal = string.Empty;
                 }
                
@@ -52,9 +52,9 @@ namespace CalculatorApp.EntityService
             _tokenizer.ApplyDefaultConfig();
         }
 
-        public void ApplyConfig(IDictionary<string, TokenType> delimitors)
+        public void ApplyConfig(IDictionary<string, TokenType> delimiters)
         {
-            _tokenizer.ApplyConfig(delimitors);
+            _tokenizer.ApplyConfig(delimiters);
         }
 
 

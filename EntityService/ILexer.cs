@@ -6,6 +6,6 @@ namespace CalculatorApp.EntityService
     {
         IEnumerable<Token> Scan(string source);
         void ApplyDefaultConfig();
-        void ApplyConfig(IDictionary<string, TokenType> delimitors);
+        void ApplyConfig(IDictionary<string, TokenType> delimiters);
     }
 }

@@ -261,3 +261,4 @@ __pycache__/
 *.pyc
 /Infrastructure
 /EntityService
+/Tests/CalculatorService_UnitTests.cs
