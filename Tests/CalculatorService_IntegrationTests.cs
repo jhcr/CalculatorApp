@@ -148,7 +148,7 @@ namespace Test
         [InlineData("//+[+]-[-]*[*]/[/]\\n1+2000", 1)]
         [InlineData("//+[+]-[-]*[*]/[/]\\n1*2000", 1)]
         [InlineData("//+[+]-[-]*[*]/[/]\\n1+2000-3*4000", -2)]
-        void Should_Igored_Correly_When_Large_Numbers_Given(string input, int expected)
+        void Should_Ignored_Correctly_When_Large_Numbers_Given(string input, int expected)
         {
             var actual = _service.Run(input);
             Assert.Equal(expected, actual);

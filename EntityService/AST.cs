@@ -17,7 +17,9 @@ namespace CalculatorApp.EntityService
         }
     }
 
-
+    /// <summary>
+    /// A simple abstarct syntax tree for evaluation
+    /// </summary>
     public class AST
     {
         public TreeNode<Token> Root { get; set; }
@@ -29,6 +31,11 @@ namespace CalculatorApp.EntityService
             Root = BuildTree(tokens);
         }
 
+        /// <summary>
+        /// Build the tree from identified tokens
+        /// </summary>
+        /// <param name="tokens"></param>
+        /// <returns></returns>
         private TreeNode<Token> BuildTree(IEnumerable<Token> tokens)
         {
             var ts = tokens.ToArray();
@@ -63,6 +70,10 @@ namespace CalculatorApp.EntityService
             return parent;
         }
 
+        /// <summary>
+        /// Evaluate AST to calculate result
+        /// </summary>
+        /// <returns></returns>
         public int? Evaluate()
         {
             return Evaluate(Root);
