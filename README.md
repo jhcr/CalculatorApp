@@ -32,6 +32,7 @@ Input>
 //+[*]-[!!]*[xxx]/[$$$$]\n1*2!!3xxx4$$$$5
 1+2-3*4/5 = 1
 ```
+Other formats follow the requirements
 
 ### Example of inputs and outputs
 
