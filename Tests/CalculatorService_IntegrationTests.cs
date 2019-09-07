@@ -118,7 +118,7 @@ namespace Test
         }
 
         [Theory]
-        [InlineData("//[a][a]\\n1a1", 0)]
+        [InlineData("//[a][a]\\n1a1", 2)]
         void Should_Sum_When_Duplicate_Custom_Delimiters_Given(string input, int expected)
         {
             var actual = _service.Run(input);
