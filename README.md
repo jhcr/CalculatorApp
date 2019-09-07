@@ -23,6 +23,17 @@ or
 /U 200  // set number upper bound, optional, default is 1000
 ```
 
+### Sepecial format 
+Use custom delimiters to enable all operators.
+
+In below example, it indicates: "\#" is for addtion, "!!" is for subtraction, "xxx" is for multiplication, "$$$$" is for division
+```
+Input>
+//+[*]-[!!]*[xxx]/[$$$$]\n1*2!!3xxx4$$$$5
+1+2-3*4/5 = 1
+```
+Other formats follow the requirements
+
 ### Example of inputs and outputs
 
 
