@@ -10,43 +10,43 @@ namespace Tests
     public class Customizer_UnitTests
     {
         private Customizer _customizer;
-        private ITokenizer _tokenizor;
+        private ITokenizer _tokenizorMock;
 
         public Customizer_UnitTests()
         {
             _customizer = new Customizer();
-            _tokenizor = Substitute.For<ITokenizer>();
+            _tokenizorMock = Substitute.For<ITokenizer>();
         }
 
         [Fact]
         void Should_Tokonizer_Receive_Delimitor_When_Single_Custom_Delimiter_Given()
         {
-            var actual = _customizer.Config(_tokenizor, "//a\\n1a1");
+            var actual = _customizer.Config(_tokenizorMock, "//a\\n1a1");
 
             Assert.Equal("1a1", actual);
-            _tokenizor.ReceivedWithAnyArgs(1).ApplyDefaultConfig();
-            _tokenizor.ReceivedWithAnyArgs(1).ApplyConfig(Arg.Is<IDictionary<string, TokenType>>(o=>o.ContainsKey("a") && o.Keys.Count == 1));
+            _tokenizorMock.ReceivedWithAnyArgs(1).ApplyDefaultConfig();
+            _tokenizorMock.ReceivedWithAnyArgs(1).ApplyConfig(Arg.Is<IDictionary<string, TokenType>>(o=>o.ContainsKey("a") && o.Keys.Count == 1));
         }
 
         [Fact]
         void Should_Tokonizer_Receive_Delimitor_When_Any_Length_Custom_Delimiter_Given()
         {
-            var actual = _customizer.Config(_tokenizor, "//[aa][bbb][ccc]\\n1a1");
+            var actual = _customizer.Config(_tokenizorMock, "//[aa][bbb][ccc]\\n1a1");
 
             Assert.Equal("1a1", actual);
-            _tokenizor.ReceivedWithAnyArgs(1).ApplyDefaultConfig();
-            _tokenizor.ReceivedWithAnyArgs(1).ApplyConfig(Arg.Is<IDictionary<string, TokenType>>(o => o.ContainsKey("aa") 
+            _tokenizorMock.ReceivedWithAnyArgs(1).ApplyDefaultConfig();
+            _tokenizorMock.ReceivedWithAnyArgs(1).ApplyConfig(Arg.Is<IDictionary<string, TokenType>>(o => o.ContainsKey("aa") 
             && o.ContainsKey("bbb") && o.ContainsKey("ccc") && o.Keys.Count == 3));
         }
 
         [Fact]
         void Should_Reserve_Bracket_When_Any_Length_Custom_Delimiter_Given()
         {
-            var actual = _customizer.Config(_tokenizor, "//[a[]\\n1a1");
+            var actual = _customizer.Config(_tokenizorMock, "//[a[]\\n1a1");
 
             Assert.Equal("//[a[]\\n1a1", actual);
-            _tokenizor.ReceivedWithAnyArgs(1).ApplyDefaultConfig();
-            _tokenizor.ReceivedWithAnyArgs(0).ApplyConfig(Arg.Any<IDictionary<string, TokenType>>());
+            _tokenizorMock.ReceivedWithAnyArgs(1).ApplyDefaultConfig();
+            _tokenizorMock.ReceivedWithAnyArgs(0).ApplyConfig(Arg.Any<IDictionary<string, TokenType>>());
         }
 
         [Fact]
@@ -78,5 +78,15 @@ namespace Tests
             Assert.Equal(200, _customizer.NumberUpperBound);
         }
 
+        [Fact]
+        public void Should_Apply_To_Tokenizer_When_Custom_Number_UpperBound_Given()
+        {
+            _customizer.NumberUpperBound = 200;
+            var actual = _customizer.Config(_tokenizorMock, "1,1");
+
+            Assert.Equal("1,1", actual);
+            _tokenizorMock.Received(1).ApplyDefaultConfig(Arg.Any<IDictionary<string,TokenType>>(), Arg.Is<int?>(num=>num == 200));
+            _tokenizorMock.ReceivedWithAnyArgs(0).ApplyConfig(Arg.Any<IDictionary<string, TokenType>>());
+        }
     }
 }

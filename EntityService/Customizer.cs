@@ -38,6 +38,10 @@ namespace CalculatorApp.EntityService
                     case "/D":
                         if (bool.TryParse(args[x + 1], out var deny))
                             DenyNegativeNumbers = deny;
+                        else if (args[x + 1] == "0")
+                            DenyNegativeNumbers = false;
+                        else if (args[x + 1] == "1")
+                            DenyNegativeNumbers = true;
                         break;
                     case "/U":
                         if( int.TryParse(args[x + 1], out var num))
@@ -57,7 +61,7 @@ namespace CalculatorApp.EntityService
         {
             target.ApplyDefaultConfig(new Dictionary<string, TokenType>() {
                 { ",", TokenType.PlusOperator },
-                { GlobalAlternateDelimiter, TokenType.PlusOperator } });
+                { GlobalAlternateDelimiter, TokenType.PlusOperator } }, NumberUpperBound);
 
             if (TryParse(text, out var offset, out Dictionary<string, TokenType> delimiters))
             {
@@ -95,7 +99,9 @@ namespace CalculatorApp.EntityService
                 delimiters = new Dictionary<string, TokenType>();
                 while (enu.MoveNext())
                 {
-                    delimiters.Add((enu.Current as Capture).Value, TokenType.PlusOperator);
+                    var de = (enu.Current as Capture).Value;
+                    if (!delimiters.ContainsKey(de))
+                        delimiters.Add(de, TokenType.PlusOperator);
                 }
                 offset = c[0].Groups["custom"].Length;
                 return true;

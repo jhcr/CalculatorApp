@@ -146,6 +146,5 @@ namespace Tests
             _tokenizerMock.Received(0).TryParseDelimiter(Arg.Is(""), out Arg.Any<string>(), out Arg.Any<string>());
             _tokenizerMock.Received(1).Identify(Arg.Is(""));
         }
-
     }
 }

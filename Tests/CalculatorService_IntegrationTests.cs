@@ -100,7 +100,7 @@ namespace Test
 
         [Theory]
         [InlineData("//aa\\n1a1", 0)]
-        void Should_Treate_As_Invalid_When_Single_Custom_Delimiter_Has_Invalid_Format(string input, int expected)
+        void Should_Treat_As_Invalid_When_Single_Custom_Delimiter_Has_Invalid_Format(string input, int expected)
         {
             var actual = _service.Run(input);
             Assert.Equal(expected, actual);
@@ -112,6 +112,14 @@ namespace Test
         [InlineData("//[a1][b2][c3]\\n1 a1 2b23c3", 6)]
         [InlineData("//[*][!!][XXX]\\n1*2!!XXX3", 6)]
         void Should_Sum_When_Multiple_Custom_Delimiters_Given(string input, int expected)
+        {
+            var actual = _service.Run(input);
+            Assert.Equal(expected, actual);
+        }
+
+        [Theory]
+        [InlineData("//[a][a]\\n1a1", 0)]
+        void Should_Sum_When_Duplicate_Custom_Delimiters_Given(string input, int expected)
         {
             var actual = _service.Run(input);
             Assert.Equal(expected, actual);
