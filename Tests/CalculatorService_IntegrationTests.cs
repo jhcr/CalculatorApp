@@ -4,7 +4,7 @@ using CalculatorApp.Infrastructure;
 using System;
 using Xunit;
 
-namespace Test
+namespace Tests
 {
     public class CalculatorService_IntegrationTests
     {
