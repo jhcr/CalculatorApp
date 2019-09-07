@@ -8,7 +8,8 @@ namespace CalculatorApp.EntityService
     /// </summary>
     public class Tokenizor: ITokenizer
     {
-        private Dictionary<string, TokenType> _rules;
+        private IDictionary<string, TokenType> _rules;
+        private int _numberUpperBound;
 
         public Tokenizor() {
             ApplyDefaultConfig();
@@ -49,7 +50,7 @@ namespace CalculatorApp.EntityService
             }
             else if (int.TryParse(lex, out var num))
             {   // Number
-                if (num > 1000)
+                if (num > _numberUpperBound)
                 {
                     return new Token(TokenType.IgnoredNumber, lex);
                 }
@@ -68,12 +69,19 @@ namespace CalculatorApp.EntityService
         /// <summary>
         /// Apply default delimiter config
         /// </summary>
-        public void ApplyDefaultConfig()
+        /// <param name="delimiters"></param>
+        /// <param name="numberUpperBound"></param>
+        public void ApplyDefaultConfig(IDictionary<string, TokenType> delimiters = null, int? numberUpperBound = null)
         {
-            _rules = new Dictionary<string, TokenType>() {
+            if (delimiters != null)
+                _rules = delimiters;
+            else
+                _rules = new Dictionary<string, TokenType>() {
                 { ",", TokenType.PlusOperator },
                 { "\\n", TokenType.PlusOperator }
             };
+
+            _numberUpperBound = numberUpperBound?? 1000;
         }
 
         /// <summary>

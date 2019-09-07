@@ -10,16 +10,20 @@ namespace CalculatorApp.EntityService
     public class Lexer : ILexer
     {
         ITokenizer _tokenizer;
+        ICustomizer _customizer;
 
-        public Lexer(ITokenizer tokenizer)
+        public Lexer(ITokenizer tokenizer, ICustomizer customizer)
         {
             _tokenizer = tokenizer;
+            _customizer = customizer;
         }
 
         public IEnumerable<Token> Scan(string source)
         {
             if (source == null) // Empty or whitespcae is valid
                 throw new ArgumentNullException(nameof(source));
+
+            source = _customizer.Config(_tokenizer, source);
 
             var reader = source.GetEnumerator();
             var lex = string.Empty;
@@ -42,21 +46,11 @@ namespace CalculatorApp.EntityService
             // Token list has to be ended by a non-delimiter lex even the lex is empty.
             tokens.Add(_tokenizer.Identify(lex));
 
-            AssertNoNegativeNumber(tokens);
+            if(_customizer.DenyNegativeNumbers)
+                AssertNoNegativeNumber(tokens);
 
             return tokens;
         }
-
-        public void ApplyDefaultConfig()
-        {
-            _tokenizer.ApplyDefaultConfig();
-        }
-
-        public void ApplyConfig(IDictionary<string, TokenType> delimiters)
-        {
-            _tokenizer.ApplyConfig(delimiters);
-        }
-
 
         /// <summary>
         /// Validate numbers are not negative

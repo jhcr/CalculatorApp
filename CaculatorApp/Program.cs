@@ -12,20 +12,26 @@ namespace CaculatorApp
         {
             var running = true;
 
-            var serviceProvider = SetupCaculatorApp();
+            Console.CancelKeyPress += delegate (object sender, ConsoleCancelEventArgs e) {
+                running = false;
+                e.Cancel = false;
+            };
+
+            var serviceProvider = ConfigureServices();
 
             var service = serviceProvider.GetService<CalculatorService>();
+            var customizer = serviceProvider.GetService<ICustomizer>();
 
-            Console.CancelKeyPress += delegate (object sender, ConsoleCancelEventArgs e) {
-                e.Cancel = true;
-                running = false;
-            };
+            customizer.ReadArguments(args);
 
             while (running)
             {
                 Console.WriteLine("Input>");
 
                 var input = Console.ReadLine();
+
+                if (input == null)
+                    break;
 
                 try
                 {
@@ -39,7 +45,7 @@ namespace CaculatorApp
             }
         }
 
-        static ServiceProvider SetupCaculatorApp()
+        static ServiceProvider ConfigureServices()
         {
             return new ServiceCollection()
                 .AddSingleton<ICustomizer, Customizer>()

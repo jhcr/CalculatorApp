@@ -6,26 +6,65 @@ using System.Text.RegularExpressions;
 namespace CalculatorApp.EntityService
 {
     /// <summary>
-    /// Customize for Tokenizer
+    /// Customize for Lexer
     /// </summary>
     public class Customizer: ICustomizer
     {
-        /// <summary>
-        /// Parse custom delimiters from text and apply to lexer, if no custom one, apply the default
-        /// </summary>
-        /// <param name="target">lexer</param>
-        /// <param name="text">source text contain custom delimiters, config secction will be removed if found</param>
-        public void Config(ILexer target, ref string text)
+        public string GlobalAlternateDelimiter { get; set; }
+        public bool DenyNegativeNumbers { get; set; }
+        public int NumberUpperBound { get; set; }
+
+        public Customizer()
         {
+            GlobalAlternateDelimiter = "\\n" ;
+            DenyNegativeNumbers = true;
+            NumberUpperBound = 1000;
+        }
+
+        /// <summary>
+        /// Parse commandline arguments into global settings
+        /// </summary>
+        /// <param name="args"></param>
+        public void ReadArguments(string[] args)
+        {
+            for (var x = 0; x < args.Length - 1; x++)
+            {
+                switch (args[x].Trim().ToUpper())
+                {
+                    case "/A":
+                        if (!Regex.IsMatch(args[x + 1],"/[ADU]"))
+                            GlobalAlternateDelimiter = args[x + 1];
+                        break;
+                    case "/D":
+                        if (bool.TryParse(args[x + 1], out var deny))
+                            DenyNegativeNumbers = deny;
+                        break;
+                    case "/U":
+                        if( int.TryParse(args[x + 1], out var num))
+                            NumberUpperBound = num;
+                        break;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Parse custom delimiters from text and apply to tokenizer, if no custom one, apply the default
+        /// </summary>
+        /// <param name="target">target</param>
+        /// <param name="text">source text contain custom delimiters</param>
+        /// <returns>the text without custom section</returns>
+        public string Config(ITokenizer target, string text)
+        {
+            target.ApplyDefaultConfig(new Dictionary<string, TokenType>() {
+                { ",", TokenType.PlusOperator },
+                { GlobalAlternateDelimiter, TokenType.PlusOperator } });
+
             if (TryParse(text, out var offset, out Dictionary<string, TokenType> delimiters))
             {
                 target.ApplyConfig(delimiters);
                 text = text.Remove(0, offset);
             }
-            else
-            {
-                target.ApplyDefaultConfig();
-            }
+            return text;
         }
 
         /// <summary>

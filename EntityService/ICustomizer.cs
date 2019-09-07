@@ -2,6 +2,10 @@
 {
     public interface ICustomizer
     {
-        void Config(ILexer target, ref string text);
+        string GlobalAlternateDelimiter { get; }
+        bool DenyNegativeNumbers { get; }
+        int NumberUpperBound { get; }
+        string Config(ITokenizer target, string text);
+        void ReadArguments(string[] args);
     }
 }

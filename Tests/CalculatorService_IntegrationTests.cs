@@ -12,7 +12,7 @@ namespace Test
 
         public CalculatorService_IntegrationTests()
         {
-            _service = new CalculatorService(new Customizer(), new Lexer(new Tokenizor()), new Printer());
+            _service = new CalculatorService(new Lexer(new Tokenizor(),new Customizer()), new Printer());
         }
 
         [Theory]
