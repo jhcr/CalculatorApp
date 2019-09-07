@@ -1,7 +1,7 @@
 # CalculatorApp
 A Console App for addition, subtraction, multiplication, and division operations.
 
-All requirements and stretch goals in https://github.com/restaurant365/challenge-calculator have been implemented.
+All requirements and stretch goals have been implemented, see https://github.com/restaurant365/challenge-calculator.
 
 ## Getting Started
 
