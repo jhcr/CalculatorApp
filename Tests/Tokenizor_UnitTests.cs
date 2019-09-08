@@ -8,11 +8,13 @@ namespace Tests
 {
     public class Tokenizor_UnitTests
     {
-        private Tokenizor _tokenizor;
+        private ITokenizer _tokenizor;
+        private IConfiguration _config;
 
         public Tokenizor_UnitTests()
         {
-            _tokenizor = new Tokenizor();
+            _config = new Configuration();
+            _tokenizor = new Tokenizor(_config);
         }
 
         [Theory]
@@ -84,17 +86,6 @@ namespace Tests
             Assert.Equal(lex, actual.Raw);
             Assert.Equal(int.Parse(lex), actual.Value);
             Assert.Equal(TokenType.Number, actual.Type);
-        }
-
-        [Fact]
-        void Should_Throw_OverlappingDelimitersException_When_Try_Add_Overlapping_Delimiters()
-        {
-            Assert.Throws<OverlappingDelimitersException>(() =>
-            {
-                _tokenizor.ApplyConfig("ab", TokenType.PlusOperator);
-                _tokenizor.ApplyConfig("abc", TokenType.PlusOperator);
-            }
-            );
         }
     }
 }

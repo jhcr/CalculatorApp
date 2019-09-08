@@ -8,11 +8,12 @@ namespace CalculatorApp.EntityService
     /// </summary>
     public class Tokenizor: ITokenizer
     {
+        IConfiguration _config;
         private IDictionary<string, TokenType> _rules;
-        private int _numberUpperBound;
 
-        public Tokenizor() {
-            ApplyDefaultConfig();
+        public Tokenizor(IConfiguration config) {
+            _config = config;
+            _rules = _config.DefaultRule;
         }
 
         public bool TryParseDelimiter(string lex, out string delimiter, out string literal)
@@ -31,7 +32,13 @@ namespace CalculatorApp.EntityService
                     literal = lex.Remove(lex.Length - delimiter.Length);
                     return true;
                 }
-                  
+            }
+
+            if (lex.EndsWith(_config.AlternateDelimiter))
+            {
+                delimiter = _config.AlternateDelimiter;
+                literal = lex.Remove(lex.Length - delimiter.Length);
+                return true;
             }
 
             return false;
@@ -48,9 +55,14 @@ namespace CalculatorApp.EntityService
             {   // Operator
                 return new Token(_rules[lex], lex);
             }
+            else if (_config.AlternateDelimiter == lex)
+            {
+                // Operator match alternate delimiter
+                return new Token(TokenType.PlusOperator, lex);
+            }
             else if (int.TryParse(lex, out var num))
             {   // Number
-                if (num > _numberUpperBound)
+                if (num > _config.NumberUpperBound)
                 {
                     return new Token(TokenType.IgnoredNumber, lex);
                 }
@@ -58,7 +70,6 @@ namespace CalculatorApp.EntityService
                 {
                     return new Token(TokenType.Number, lex, num);
                 }
-
             }
             else
             {   // Invalid/Missing numbers should be converted to 0
@@ -67,70 +78,32 @@ namespace CalculatorApp.EntityService
         }
 
         /// <summary>
-        /// Apply default delimiter config
+        /// Apply custom delimiters
         /// </summary>
         /// <param name="delimiters"></param>
-        /// <param name="numberUpperBound"></param>
-        public void ApplyDefaultConfig(IDictionary<string, TokenType> delimiters = null, int? numberUpperBound = null)
-        {
-            if (delimiters != null)
-                _rules = delimiters;
-            else
-                _rules = new Dictionary<string, TokenType>() {
-                { ",", TokenType.PlusOperator },
-                { "\\n", TokenType.PlusOperator }
-            };
-
-            _numberUpperBound = numberUpperBound?? 1000;
-        }
-
-        /// <summary>
-        /// Apply one config on top of default
-        /// </summary>
-        /// <param name="delimiter"></param>
-        /// <param name="tokenType"></param>
-        public void ApplyConfig(string delimiter, TokenType tokenType)
-        {
-            if (string.IsNullOrEmpty(delimiter))
-                throw new ArgumentNullException(nameof(delimiter));
-
-            if (_rules.ContainsKey(delimiter))
-            {
-                _rules[delimiter] = tokenType;
-            }
-            else
-            {
-                AssertDelimiterNotOverlapped(delimiter);
-                _rules.Add(delimiter, tokenType);
-            }
-        }
-
-        /// <summary>
-        /// Apply on top of default
-        /// </summary>
-        /// <param name="delimiters"></param>
-        public void ApplyConfig(IDictionary<string, TokenType> delimiters)
+        public void ApplyCustomRule(IDictionary<string, TokenType> delimiters)
         {
             if (delimiters == null)
                 throw new ArgumentNullException(nameof(delimiters));
 
-            foreach (var de in delimiters.Keys)
+            foreach (var de in _config.DefaultRule.Keys)
             {
-                ApplyConfig(de, delimiters[de]);
-            }
-        }
-
-        private void AssertDelimiterNotOverlapped(string delimiter)
-        {
-            var enu = _rules.Keys.GetEnumerator();
-            while (enu.MoveNext())
-            {
-                var overlapped = enu.Current.Length > delimiter.Length ? enu.Current.Contains(delimiter) : delimiter.Contains(enu.Current);
-                if (overlapped)
+                if (!delimiters.ContainsKey(de))
                 {
-                    throw new OverlappingDelimitersException(new List<string> { delimiter, enu.Current });
+                    delimiters.Add(de, _rules[de]);
                 }
             }
+
+            _rules = delimiters;
+        }
+
+        /// <summary>
+        /// Remove custom delimiters
+        /// </summary>
+        /// <param name="delimiters"></param>
+        public void ResetCustomRule()
+        {
+            _rules = _config.DefaultRule;
         }
     }
 }

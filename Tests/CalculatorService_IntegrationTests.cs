@@ -9,10 +9,12 @@ namespace Tests
     public class CalculatorService_IntegrationTests
     {
         private CalculatorService _service;
+        private IConfiguration _config;
 
         public CalculatorService_IntegrationTests()
         {
-            _service = new CalculatorService(new Lexer(new Tokenizor(),new Customizer()), new Printer());
+            _config = new Configuration();
+            _service = new CalculatorService(new Lexer(new Tokenizor(_config), new DelimiterParser(), _config), new Printer());
         }
 
         [Theory]
@@ -129,7 +131,13 @@ namespace Tests
         void Should_Throw_OverlappingDelimitersException_When_Try_Add_Overlapping_Delimiters()
         {
             Assert.Throws<OverlappingDelimitersException>(() => _service.Run("//[ab][abc][abcd]\\n1abc1abcd1"));
-            Assert.Throws<OverlappingDelimitersException>(() => _service.Run("//[,,]\\n1,,1"));
+        }
+
+        [Fact]
+        void Should_Not_Throw_OverlappingDelimitersException_When_Default_Delimier_Given()
+        {
+            var actual = _service.Run("//[,]\\n1,1");
+            Assert.Equal(2, actual);
         }
 
         [Theory]

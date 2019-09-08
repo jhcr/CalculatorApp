@@ -10,12 +10,14 @@ namespace CalculatorApp.EntityService
     public class Lexer : ILexer
     {
         ITokenizer _tokenizer;
-        ICustomizer _customizer;
+        IDelimiterParser _parser;
+        IConfiguration _config;
 
-        public Lexer(ITokenizer tokenizer, ICustomizer customizer)
+        public Lexer(ITokenizer tokenizer, IDelimiterParser parser, IConfiguration config)
         {
             _tokenizer = tokenizer;
-            _customizer = customizer;
+            _parser = parser;
+            _config = config;
         }
 
         public IEnumerable<Token> Scan(string source)
@@ -23,7 +25,16 @@ namespace CalculatorApp.EntityService
             if (source == null) // Empty or whitespcae is valid
                 throw new ArgumentNullException(nameof(source));
 
-            source = _customizer.Config(_tokenizer, source);
+            // Try parse custom delimiters
+            if (_parser.TryParse(source, out var offset, out var delimiters))
+            {
+                _tokenizer.ApplyCustomRule(delimiters);
+                source = source.Remove(0, offset);
+            }
+            else
+            {   // reset custom rule for each scan
+                _tokenizer.ResetCustomRule();
+            }
 
             var reader = source.GetEnumerator();
             var lex = string.Empty;
@@ -46,7 +57,7 @@ namespace CalculatorApp.EntityService
             // Token list has to be ended by a non-delimiter lex even the lex is empty.
             tokens.Add(_tokenizer.Identify(lex));
 
-            if(_customizer.DenyNegativeNumbers)
+            if(_config.DenyNegativeNumbers)
                 AssertNoNegativeNumber(tokens);
 
             return tokens;

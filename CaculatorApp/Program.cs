@@ -20,9 +20,9 @@ namespace CaculatorApp
             var serviceProvider = ConfigureServices();
 
             var service = serviceProvider.GetService<CalculatorService>();
-            var customizer = serviceProvider.GetService<ICustomizer>();
+            var config = serviceProvider.GetService<IConfiguration>();
 
-            customizer.ReadArguments(args);
+            config.ParseFrom(args);
 
             while (running)
             {
@@ -48,7 +48,8 @@ namespace CaculatorApp
         static ServiceProvider ConfigureServices()
         {
             return new ServiceCollection()
-                .AddSingleton<ICustomizer, Customizer>()
+                .AddSingleton<IConfiguration, Configuration>()
+                .AddSingleton<IDelimiterParser, DelimiterParser>()
                 .AddSingleton<ITokenizer, Tokenizor>()
                 .AddSingleton<IPrinter, Printer>()
                 .AddSingleton<ILexer, Lexer>()
